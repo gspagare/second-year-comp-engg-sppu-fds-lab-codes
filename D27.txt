@@ -1,0 +1,254 @@
+/* Experiment D27: Implement C++ program for expression conversion as infix to 
+                   postfix and its evaluation using stack based on given conditions:  
+                   Operands and operator, both must be single character, Input Postfix 
+                   expression must be in a desired format, Only '+', '-', '*' and '/ ' 
+                   operators are expected.
+*/
+
+#include <iostream>
+using namespace std;
+class Stack
+{
+private:
+    int ans;
+    int top =-1;
+    int n,a[20];
+    char pf[100];
+    char inf[100],in[100];
+    char stack[20];
+public:
+    void push(char );
+    void push1(int );
+    char pop();
+    int pop1();
+    int preference(char );
+    void display();
+    void displayans();
+    void infix(char *);
+    char lastele();
+    bool isnotEmpty();
+    void postfix(char *);
+};
+void Stack::push(char b)
+{
+        top++;
+        stack[top] = b;
+        //cout<<"\nelement in array is: "<<a[top];
+}
+void Stack::push1(int b)
+{
+        top++;
+        a[top] = b;
+        //cout<<"\nelement in array is: "<<a[top];
+        
+}
+char Stack::pop()
+{
+    //cout<<"\nLast element is: "<<a[top];
+    char h=stack[top];
+    top--;
+    return h;
+} 
+int Stack::pop1()
+{
+    //cout<<"\nLast element is: "<<a[top];
+    int h=a[top];
+    top--;
+    return h;
+} 
+void Stack::display()
+{
+    cout << "\nThe stack is:";
+    if(top==-1)
+    {
+    	cout<<"\nThe stack is empty! Nothing to display.";
+    }
+    else
+    {
+    	for (int i = 0;i <= top;i++)
+    	{
+        	cout << stack[i] << "  ";
+    	}
+    }
+}
+void Stack::displayans()
+{
+    cout << "\nThe answer is:"<<ans<<endl;;
+}
+char Stack::lastele()
+{
+	char h=stack[top];
+    return h;
+} 
+bool Stack::isnotEmpty()
+{
+	if(top==-1)
+	{
+		return false;
+	}
+	else
+	{
+		return true;
+	}
+}
+int Stack::preference(char b)
+{
+	if(b=='(')
+	{
+		return 0;
+	}
+	if((b=='+')||(b=='-'))
+	{
+		return 1;
+	}
+	if((b=='/')||(b=='*'))
+	{
+		return 2;
+	}
+}
+void Stack::infix(char *b)
+{
+	int i=0,k,top=-1;
+	int j=0;
+	while(b[i]!='\0')
+	{
+		inf[i]=b[i];
+		i++;
+	}
+	inf[i]='\0';
+	pf[i]='\0';
+	i=0;
+	//cout<<"b["<<i<<"] = "<<inf[i]<<endl;
+	while(inf[i]!='\0')
+	{
+		//cout<<"\n----------------------------\n";
+		//cout<<"\nIn while loop."<<endl;
+		//cout<<"INFIX["<<i<<"] = "<<inf[i]<<endl;
+		if(isdigit(inf[i]))
+		{
+			//cout<<inf[i]<<" is a digit. "<<endl;
+			pf[j]=inf[i];
+			j++;
+		}
+		else if(inf[i]=='(')
+		{
+			push(inf[i]);
+			//cout<<"\n( is pushed";
+			//display();
+		}
+		else if(inf[i]==')')
+        {
+        	//char lastelement=lastele();
+			//cout<<"The last element in stack is: "<<lastelement;
+        	while(lastele()!='(')
+        	{
+        		//cout<<endl<<"In (."<<endl;
+        		pf[j]=pop();
+        		j++;
+        		//cout<<"The last element stack is: "<<lastele();
+        	}
+        	pop();
+        }
+        else if(preference(inf[i])>preference(lastele()))
+        {
+        	push(inf[i]);
+        }
+        else if(preference(inf[i])<=preference(lastele()))
+        {
+        	pf[j]=pop();
+        	j++;
+        	push(inf[i]);
+        }
+       	//cout<<"\nPostfix expression: "<<pf;
+       	//display();
+		i++;
+	}
+	//cout<<"\nTOP ="<<top;
+	if(isnotEmpty())
+	{
+		//cout<<"\nTop is not equal to -1.";
+		while(lastele()!=-1)
+		{
+			pf[j]=pop();
+			j++;
+		}
+	}
+	//display();
+	pf[j]='\0';
+	cout<<"The postfix expression is: "<<pf;
+	cout<<"\n";
+	postfix(pf);    
+}
+void Stack::postfix(char *b)
+{
+    top=-1;
+    int i=0,op1=0,op2=0;
+    while(b[i]!='\0')
+    {
+        if(isdigit(b[i]))
+        {
+            //cout<<"\nDigit is : "<<b[i];
+            char x=b[i];
+            int i=x-48;
+            push1(i);
+        }
+        else
+        {
+            if(b[i]=='+')
+            {
+                op2=pop1();
+                op1=pop1();
+                /*cout<<"\nCame in +";
+                cout<<"\nop1 ="<<op1;
+                cout<<"\nop2 ="<<op2;
+                */
+                ans=op1+op2;
+                push1(ans);
+            }
+            else if(b[i]=='-')
+            {
+                op2=pop1();
+                op1=pop1();
+                /*cout<<"\nCame in -";
+                cout<<"\nop1 ="<<op1;
+                cout<<"\nop2 ="<<op2;
+                */
+                ans=op1-op2;
+                push1(ans);
+            }
+            else if(b[i]=='*')
+            {
+                op2=pop1();
+                op1=pop1();
+                /*cout<<"\nCame in *";
+                cout<<"\nop1 ="<<op1;
+                cout<<"\nop2 ="<<op2;
+                */ans=op2*op1;
+                push1(ans);
+            }
+            else if(b[i]=='/')
+            {
+                op2=pop1();
+                op1=pop1();
+                /*cout<<"\nCame in /";
+                cout<<"\nop1 ="<<op1;
+                cout<<"\nop2 ="<<op2;
+                */
+                ans=op1/op2;
+                push1(ans);
+            }
+        } 
+        i++;     
+     }           
+}
+int main()
+{
+    Stack s;
+    char str[100];
+    cout<<"\nEnter the infix expression: ";
+    cin.getline(str,100);
+    cout<<"\nThe infix expression is: "<<str<<endl;
+    s.infix(str);
+    s.displayans();
+    return 0;
+}
